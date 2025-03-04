@@ -46,15 +46,10 @@ fn main() {
     // Loop over each crate and run `cargo test`
     for krate in pr_doc.crates {
         println!("Running tests for: {}", krate.name);
-        let mut args = vec!["test".to_string(), "-p".to_string(), krate.name.clone()];
-
-        // Enable all features only for `sp-tracing`
-        if krate.name == "sp-tracing" {
-            args.push("--all-features".to_string());
-        }
+        let args = ["test", "-p", &krate.name, "--all-features"];
 
         let status = Command::new("cargo")
-            .args(&args)
+            .args(args)
             .current_dir(&working_dir)
             .status()
             .expect("Failed to execute cargo test");
