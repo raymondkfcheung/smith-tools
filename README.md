@@ -4,7 +4,9 @@ A collection of scripts and utilities to streamline development workflows, autom
 
 ## Useful Commands and Tools
 
-### [Oh My Zsh](https://ohmyz.sh)
+### Oh My Zsh
+
+* [`ohmyzsh`](https://ohmyz.sh)
 
 ```shell
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
@@ -52,8 +54,9 @@ rustup install nightly
 ```shell
 cd ~/projects/polkadot-sdk
 
-rustup target add wasm32-unknown-unknown --toolchain stable-x86_64-unknown-linux-gnu
 rustup component add rust-src --toolchain stable-x86_64-unknown-linux-gnu
+rustup target add wasm32-unknown-unknown --toolchain stable-x86_64-unknown-linux-gnu
+rustup target add wasm32v1-none --toolchain stable-x86_64-unknown-linux-gnu
 
 sudo apt update
 sudo apt list --upgradable
@@ -83,6 +86,15 @@ rsync -avz \
     ${SSH_USERNAME}@${SSH_HOST}:${REMOTE_PATH}/projects/polkadot-sdk/
 ```
 
-## References
+### Rust Script
 
-* [rust-script](https://github.com/fornwall/rust-script)
+* [`rust-script`](https://github.com/fornwall/rust-script)
+
+```shell
+cargo install rust-script
+
+cd ~/projects
+git clone git@github.com:raymondkfcheung/smith-tools.git
+
+alias run-tests="~/projects/smith-tools/src/rust/run_tests.rs"
+```
