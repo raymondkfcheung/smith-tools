@@ -64,10 +64,14 @@ fn main() {
 
     // Print summary if any tests failed
     if !failed_tests.is_empty() {
+        let mut failed_mods = String::new();
         eprintln!("\n🚨 Some tests failed:");
         for failed in failed_tests {
             eprintln!("- {}", failed);
+            failed_mods.push_str(&format!("-p {} ", failed));
         }
+        eprintln!("\nTo run the tests for the failed crates, use:");
+        eprintln!("cargo test f{failed_mods}");
         std::process::exit(1);
     } else {
         println!("\n🎉 All tests passed successfully!");
