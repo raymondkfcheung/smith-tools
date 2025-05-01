@@ -71,7 +71,7 @@ fn main() {
             failed_mods.push_str(&format!("-p {} ", failed));
         }
         eprintln!("\nTo run the tests for the failed crates, use:");
-        eprintln!("cargo test -p {failed_mods}");
+        eprintln!("cargo test {failed_mods}");
         std::process::exit(1);
     } else {
         println!("\n🎉 All tests passed successfully!");
