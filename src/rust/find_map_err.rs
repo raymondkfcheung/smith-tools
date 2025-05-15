@@ -27,7 +27,10 @@ fn search_for_map_err(dir: &str) {
         if let Ok(content) = fs::read_to_string(path) {
             let lines: Vec<&str> = content.lines().collect();
             for (i, line) in lines.iter().enumerate() {
-                if path.display().to_string().contains("xcm")
+                let file_path = path.display().to_string();
+                if file_path.contains("xcm")
+                    && !file_path.contains("benchmarking")
+                    && !file_path.contains("tests")
                     && line.contains("map_err")
                     && line.contains("Error")
                 {
