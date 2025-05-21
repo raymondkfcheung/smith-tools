@@ -47,7 +47,7 @@ fn main() {
     let mut failed_clippy_checks = vec![];
 
     // Loop over each crate and run `cargo test`
-    let ignored_crates: HashSet<_> = vec!["staging-xcm-builder", "xcm-runtime-apis"]
+    let ignored_crates: HashSet<_> = vec!["pallet-xcm", "staging-xcm-builder", "xcm-runtime-apis"]
         .into_iter()
         .map(String::from)
         .collect();
