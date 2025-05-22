@@ -98,3 +98,10 @@ git clone git@github.com:raymondkfcheung/smith-tools.git
 
 alias run-tests="~/projects/smith-tools/src/rust/run_tests.rs"
 ```
+
+### Cargo Commands
+
+```shell
+# Find version conflicts
+cargo tree | grep "sp-io v" | sed 's/.*sp-io v\([0-9.]*\).*/v\1/' | sort | uniq -c
+```
