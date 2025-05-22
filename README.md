@@ -103,5 +103,6 @@ alias run-tests="~/projects/smith-tools/src/rust/run_tests.rs"
 
 ```shell
 # Find version conflicts
+cargo tree -i sp-io
 cargo tree | grep "sp-io v" | sed 's/.*sp-io v\([0-9.]*\).*/v\1/' | sort | uniq -c
 ```
