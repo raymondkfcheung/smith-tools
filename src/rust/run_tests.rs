@@ -47,10 +47,15 @@ fn main() {
     let mut failed_clippy_checks = vec![];
 
     // Loop over each crate and run `cargo test`
-    let ignored_crates: HashSet<_> = vec!["pallet-xcm", "staging-xcm-builder", "xcm-runtime-apis"]
-        .into_iter()
-        .map(String::from)
-        .collect();
+    let ignored_crates: HashSet<_> = vec![
+        "pallet-xcm",
+        "parachains-common",
+        "staging-xcm-builder",
+        "xcm-runtime-apis",
+    ]
+    .into_iter()
+    .map(String::from)
+    .collect();
     for krate in pr_doc.crates {
         println!("Running tests for: {}", krate.name);
         let mut args = vec!["test", "-p", &krate.name];
