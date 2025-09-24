@@ -22,10 +22,15 @@ struct Crate {
 fn main() {
     // Get the first argument (PR number)
     let args: Vec<String> = env::args().collect();
+    let default_features = "--all-features".to_string();
     let pr_number = args.get(1).unwrap_or_else(|| {
-        eprintln!("Usage: rust-script run_tests.rs <pr_number>");
+        eprintln!("Usage: rust-script run_tests.rs <pr_number> [features, default: {default_features}]");
         std::process::exit(1);
     });
+
+    let features = args.get(2).unwrap_or(&default_features);
+    let is_not_default = features != &default_features;
+    println!("Running with features: {features}");
 
     // Get the working directory
     let home = env::var("HOME").expect("Failed to get HOME directory");
@@ -57,13 +62,16 @@ fn main() {
     .map(String::from)
     .collect();
     for krate in pr_doc.crates {
-        println!("Running tests for: {}", krate.name);
         let mut args = vec!["test", "-p", &krate.name];
         if !ignored_crates.contains(&krate.name) {
-            args.push("--all-features");
+            if is_not_default {
+                args.push("--features");
+            }
+            args.push(features);
         }
 
         // Run `cargo test`
+        println!("Running tests for {}: {args:?}", krate.name);
         let status = Command::new("cargo")
             .args(args)
             .current_dir(&working_dir)
