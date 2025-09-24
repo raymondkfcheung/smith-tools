@@ -83,7 +83,7 @@ fn main() {
 
             // Run `cargo clippy`
             let clippy_status = Command::new("cargo")
-                .args(["clippy", "-p", &krate.name])
+                .args(["clippy", "-p", &krate.name, &default_features])
                 .current_dir(&working_dir)
                 .status()
                 .expect("Failed to execute cargo clippy");
