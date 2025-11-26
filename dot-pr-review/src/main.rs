@@ -11,9 +11,17 @@ struct Args {
     #[arg(long, value_name = "YYYY-MM-DD")]
     updated_since: String,
 
-    /// Optional repo filter: owner/name (e.g. rust-lang/rust)
+    /// Optional `repo` filter: owner/name (e.g. paritytech/polkadot-sdk)
     #[arg(long)]
     repo: Option<String>,
+
+    /// Optional `is` filter (e.g. issue, pr)
+    #[arg(long, value_name = "FILTER")]
+    is: Option<String>,
+
+    /// Optional `state` filter (e.g. open, closed)
+    #[arg(long, value_name = "STATE")]
+    state: Option<String>,
 }
 
 #[tokio::main]
@@ -31,11 +39,19 @@ async fn main() -> Result<()> {
     //
     //  is:pr involves:@me updated:>=YYYY-MM-DD
     //
-    let mut query = format!("involves:@me updated:>={}", date_str);
+    let mut query = format!("involves:@me updated:>={date_str}");
 
     if let Some(repo) = &args.repo {
         query.push(' ');
-        query.push_str(&format!("repo:{}", repo));
+        query.push_str(&format!("repo:{repo}"));
+    }
+
+    if let Some(is_filter) = &args.is {
+        query.push_str(&format!(" is:{is_filter}"));
+    }
+
+    if let Some(state) = &args.state {
+        query.push_str(&format!(" state:{state}"));
     }
 
     // Page through results in case there are many
