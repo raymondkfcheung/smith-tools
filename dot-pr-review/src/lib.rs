@@ -27,7 +27,7 @@ pub struct Args {
 }
 
 impl Args {
-    pub fn build_query() -> Result<String> {
+    pub fn prepare() -> Result<String> {
         let args = Self::parse();
 
         // Parse date
@@ -37,10 +37,7 @@ impl Args {
         // Turn into ISO date string (GitHub search only needs the date part)
         let date_str = date.format("%Y-%m-%d").to_string();
 
-        // Build the GitHub search query:
-        //
-        //  is:pr involves:@me updated:>=YYYY-MM-DD
-        //
+        // Prepare the GitHub search query
         let mut query = format!("involves:@me updated:>={date_str}");
 
         if let Some(repo) = &args.repo {

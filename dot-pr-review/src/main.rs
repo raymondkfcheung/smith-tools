@@ -1,58 +1,10 @@
 use anyhow::Result;
-use chrono::NaiveDate;
-use clap::Parser;
-use dot_pr_review::fetch::Fetcher;
-
-#[derive(Parser, Debug)]
-#[command(name = "dot-pr-review")]
-#[command(about = "List PRs created by or assigned to you, filtered by updated date")]
-struct Args {
-    /// Updated on or after this date (YYYY-MM-DD)
-    #[arg(long, value_name = "YYYY-MM-DD")]
-    updated_since: String,
-
-    /// Optional `repo` filter: owner/name (e.g. paritytech/polkadot-sdk)
-    #[arg(long)]
-    repo: Option<String>,
-
-    /// Optional `is` filter (e.g. issue, pr)
-    #[arg(long, value_name = "FILTER")]
-    is: Option<String>,
-
-    /// Optional `state` filter (e.g. open, closed)
-    #[arg(long, value_name = "STATE")]
-    state: Option<String>,
-}
+use dot_pr_review::{Args, fetch::Fetcher};
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let args = Args::parse();
-
-    // Parse date
-    let date = NaiveDate::parse_from_str(&args.updated_since, "%Y-%m-%d")
-        .map_err(|e| anyhow::anyhow!("invalid date '{}': {}", args.updated_since, e))?;
-
-    // Turn into ISO date string (GitHub search only needs the date part)
-    let date_str = date.format("%Y-%m-%d").to_string();
-
-    // Build the GitHub search query:
-    //
-    //  is:pr involves:@me updated:>=YYYY-MM-DD
-    //
-    let mut query = format!("involves:@me updated:>={date_str}");
-
-    if let Some(repo) = &args.repo {
-        query.push(' ');
-        query.push_str(&format!("repo:{repo}"));
-    }
-
-    if let Some(is_filter) = &args.is {
-        query.push_str(&format!(" is:{is_filter}"));
-    }
-
-    if let Some(state) = &args.state {
-        query.push_str(&format!(" state:{state}"));
-    }
+    // Prepare the search query
+    let query = Args::prepare()?;
 
     // Page through results in case there are many
     let fectcher = Fetcher::new()?;
@@ -83,6 +35,7 @@ async fn main() -> Result<()> {
             let url = &item.html_url;
             let desc = &item.body.as_deref().unwrap_or_default();
 
+            println!("----------------");
             println!(
                 "{}#{number}  {title} (updated: {updated_at})",
                 if is_pr { "PR" } else { "Issue" }
