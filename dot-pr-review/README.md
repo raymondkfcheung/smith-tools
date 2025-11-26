@@ -1,5 +1,7 @@
 # dot-pr-review
 
+List GitHub issues and PRs involving you, filtered by date and optional search parameters.
+
 ## Building from source
 
 Clone the repository and build the release binary:
@@ -16,7 +18,7 @@ After a successful build, the compiled binary will be available here:
 ls -la target/release/dot-pr-review
 ```
 
-### Running the tool
+## Running the tool
 
 This tool requires you to specify a date so it knows which items to fetch. The date must be provided in `YYYY-MM-DD` format.
 
