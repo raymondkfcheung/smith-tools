@@ -88,3 +88,31 @@ impl Fetcher {
         };
     }
 }
+
+pub struct IssueFilter;
+
+impl IssueFilter {
+    pub fn should_ignore(item: &Issue, me: &Author) -> bool {
+        let author = &item.user;
+
+        // Ignore Backport items.
+        if item.title.contains("Backport #")
+            && author.login.starts_with("paritytech-")
+            && author.login.ends_with("[bot]")
+        {
+            return true;
+        }
+
+        // Include items created by me.
+        if author.login == me.login {
+            return false;
+        }
+
+        // Ignore if assigned to someone else.
+        if let Some(assginee) = &item.assignee {
+            assginee.login != me.login
+        } else {
+            true
+        }
+    }
+}

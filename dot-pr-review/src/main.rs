@@ -1,5 +1,8 @@
 use anyhow::Result;
-use dot_pr_review::{Args, fetch::Fetcher};
+use dot_pr_review::{
+    Args,
+    fetch::{Fetcher, IssueFilter},
+};
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -13,22 +16,23 @@ async fn main() -> Result<()> {
 
     loop {
         for item in &page.items {
-            // `item` is an Issue-like object, but `pull_request` is Some for PRs.
-            let is_pr = item.pull_request.is_some();
-            let author = &item.user;
-            let assginee = &item.assignee.as_ref().unwrap_or(&author);
-            if assginee.login != me.login {
+            if IssueFilter::should_ignore(item, &me) {
                 continue;
             }
+
+            let item_type = if item.pull_request.is_some() {
+                "PR"
+            } else {
+                "Issue"
+            };
+            let author = &item.user;
+            let assginee = if let Some(assigned) = &item.assignee {
+                &assigned.login
+            } else {
+                "Unassigned"
+            };
 
             let title = &item.title;
-            if title.contains("Backport #")
-                && author.login.starts_with("paritytech-")
-                && author.login.ends_with("[bot]")
-            {
-                continue;
-            }
-
             let number = &item.number;
             let updated_at = &item.updated_at;
             let state = &item.state;
@@ -36,14 +40,8 @@ async fn main() -> Result<()> {
             let desc = &item.body.as_deref().unwrap_or_default();
 
             println!("----------------");
-            println!(
-                "{}#{number}  {title} (updated: {updated_at})",
-                if is_pr { "PR" } else { "Issue" }
-            );
-            println!(
-                "    created by {}, assigned to {}",
-                author.login, assginee.login
-            );
+            println!("{item_type}#{number}  {title} (updated: {updated_at})");
+            println!("    created by {}, assigned to {}", author.login, assginee);
             println!("    [{state:?}] {url}");
             if !desc.is_empty() {
                 println!("{desc}");
