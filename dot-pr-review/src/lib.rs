@@ -53,6 +53,8 @@ impl Args {
             query.push_str(&format!(" state:{state}"));
         }
 
+        query.push_str(&format!(" sort:updated-desc"));
+
         Ok(query)
     }
 }
