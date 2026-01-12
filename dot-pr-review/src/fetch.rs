@@ -93,6 +93,11 @@ pub struct IssueFilter;
 
 impl IssueFilter {
     pub fn should_ignore(item: &Issue, me: &Author) -> bool {
+        // Ignore own repos
+        if item.repository_url.to_string().contains(&me.login) {
+            return true;
+        }
+
         let author = &item.user;
 
         // Ignore Backport items.
@@ -104,7 +109,7 @@ impl IssueFilter {
         }
 
         // Include items created by me.
-        if author.login == me.login {
+        if  author.login == me.login {
             return false;
         }
 
